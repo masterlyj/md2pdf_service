@@ -25,8 +25,8 @@ class MarkdownToPDFConverter:
         md_text = self._preprocess_math(md_text)
         return self.md.render(md_text)
     
-    async def _html_to_pdf(self, html_content: str, output_path: str):
-        """异步将 HTML 渲染为 PDF"""
+    async def _html_to_pdf_bytes(self, html_content: str) -> bytes:
+        """异步将 HTML 渲染为 PDF，并返回 bytes"""
         async with async_playwright() as p:
             browser = await p.chromium.launch(headless=True)
             page = await browser.new_page()
@@ -68,25 +68,34 @@ class MarkdownToPDFConverter:
             """
             
             await page.set_content(full_html)
-            await page.wait_for_load_state("networkidle")  # 等待 KaTeX 加载完成
-            await page.pdf(
-                path=output_path,
+            await page.wait_for_load_state("networkidle")
+            
+            pdf_bytes = await page.pdf(
                 format="A4",
                 print_background=True,
                 margin={"top": "1cm", "bottom": "1cm", "left": "1cm", "right": "1cm"}
             )
             await browser.close()
+            return pdf_bytes
 
-    def convert(self, input_path: str, output_path: str):
-        """主转换接口"""
+    async def convert_text(self, md_text: str) -> bytes:
+        """将 Markdown 文本转换为 PDF 字节流"""
+        html = self._md_to_html(md_text)
+        pdf_bytes = await self._html_to_pdf_bytes(html)
+        return pdf_bytes
+
+    def convert_file(self, input_path: str, output_path: str):
+        """主转换接口，用于命令行"""
         if not os.path.exists(input_path):
             raise FileNotFoundError(f"输入文件不存在: {input_path}")
             
         with open(input_path, "r", encoding="utf-8") as f:
             md_text = f.read()
             
-        html = self._md_to_html(md_text)
-        asyncio.run(self._html_to_pdf(html, output_path))
+        pdf_bytes = asyncio.run(self.convert_text(md_text))
+
+        with open(output_path, "wb") as f:
+            f.write(pdf_bytes)
 
 def main():
     import sys
@@ -95,7 +104,7 @@ def main():
         sys.exit(1)
         
     converter = MarkdownToPDFConverter()
-    converter.convert(sys.argv[1], sys.argv[2])
+    converter.convert_file(sys.argv[1], sys.argv[2])
     print(f"✅ 转换成功: {os.path.abspath(sys.argv[2])}")
 
 if __name__ == "__main__":
