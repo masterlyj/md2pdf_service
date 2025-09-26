@@ -1,0 +1,13 @@
+[project]
+name = "md2pdf-service"
+version = "0.1.0"
+description = "A tool to convert Markdown files with LaTeX math to high-quality PDF."
+requires-python = ">=3.11"
+dependencies = [
+    "playwright>=1.48.0",
+    "markdown-it-py>=3.0.0",
+    "mdit-py-plugins>=0.4.1"
+]
+requires-python = ">=3.11"
+[project.scripts]
+md2pdf = "md_to_pdf:main"
