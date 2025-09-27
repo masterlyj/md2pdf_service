@@ -1,17 +1,14 @@
 import sys
 import asyncio
-import uvicorn
+# # --- 修复 Windows 下 asyncio 事件循环 ---
+# # 在 Windows 上，默认的 ProactorEventLoop 不支持 subprocess，Playwright 依赖于 subprocess，因此需要切换为 SelectorEventLoopPolicy。
+# if sys.platform == "win32":
+#     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 from fastapi import FastAPI, HTTPException, Body
 from fastapi.responses import Response
+import uvicorn
 from md_to_pdf import MarkdownToPDFConverter
-
-# --- 修复 Windows 下 asyncio 事件循环策略 ---
-# 在 Windows 上，默认的 ProactorEventLoop 不支持 subprocess，
-# Playwright 依赖于 subprocess，因此需要切换为 SelectorEventLoopPolicy。
-# 必须在应用最开始设置。
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-# --- 修复结束 ---
 
 app = FastAPI(
     title="Markdown to PDF Converter API",

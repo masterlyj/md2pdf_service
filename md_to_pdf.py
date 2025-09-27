@@ -49,13 +49,33 @@ class MarkdownToPDFConverter:
                     body {{
                         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
                         line-height: 1.6;
-                        padding: 2rem;
-                        max-width: 900px;
-                        margin: auto;
+                        padding: 1rem;
+                        max-width: 1000px;
+                        margin: 0 auto;
+                        box-sizing: border-box;
                     }}
-                    table {{ border-collapse: collapse; width: 100%; margin: 1em 0; }}
-                    th, td {{ border: 1px solid #ccc; padding: 0.6em 1em; }}
-                    th {{ background-color: #f3f4f6; }}
+                    table {{ 
+                        border-collapse: collapse; 
+                        width: auto; 
+                        margin: 1em auto; 
+                        table-layout: fixed;
+                        overflow-x: auto;
+                        font-size: 0.8em;
+                    }}
+                    th, td {{ 
+                        border: 1px solid #ccc; 
+                        padding: 0.5em 0.8em; 
+                        text-align: center;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        word-break: break-all;
+                    }}
+                    th {{ 
+                        background-color: #f3f4f6; 
+                        font-weight: bold;
+                        text-align: center;
+                    }}
                     pre {{ background: #f6f8fa; padding: 1em; border-radius: 6px; }}
                     blockquote {{ border-left: 4px solid #ddd; padding-left: 1em; color: #666; }}
                     {self.custom_css}
@@ -73,7 +93,8 @@ class MarkdownToPDFConverter:
             pdf_bytes = await page.pdf(
                 format="A4",
                 print_background=True,
-                margin={"top": "1cm", "bottom": "1cm", "left": "1cm", "right": "1cm"}
+                margin={"top": "1cm", "bottom": "1cm", "left": "1cm", "right": "1cm"},
+                scale=0.8
             )
             await browser.close()
             return pdf_bytes
