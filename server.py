@@ -52,4 +52,4 @@ async def convert_markdown_to_pdf(
 if __name__ == "__main__":
     # 使用 uvicorn 启动服务
     # 生产环境建议使用 gunicorn + uvicorn workers
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8020)
