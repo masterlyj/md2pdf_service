@@ -50,9 +50,10 @@ class MarkdownToPDFConverter:
                         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
                         line-height: 1.6;
                         padding: 1rem;
-                        max-width: 1000px;
+                        max-width: 100%;
                         margin: 0 auto;
                         box-sizing: border-box;
+                        text-align: justify;
                     }}
                     table {{ 
                         border-collapse: collapse; 
